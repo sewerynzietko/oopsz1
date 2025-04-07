@@ -32,6 +32,14 @@ public class Person implements Comparable<Person>{
         return youngestChild;
     }
 
+    public String getFname() {
+        return fname;
+    }
+
+    public String getLname() {
+        return lname;
+    }
+
     @Override
     public int compareTo(Person o) {
         return this.birthDate.compareTo(o.birthDate);
