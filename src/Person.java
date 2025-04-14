@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -6,6 +7,7 @@ import java.util.TreeSet;
 public class Person implements Comparable<Person>{
     private String fname, lname;
     private LocalDate birthDate;
+    private LocalDate deathDate;
     private Set<Person> children;
     public boolean adopt(Person child){
         return children.add(child);
@@ -16,6 +18,32 @@ public class Person implements Comparable<Person>{
         this.lname = lname;
         this.birthDate = birthDate;
         this.children = new TreeSet<>();
+    }
+
+    public Person(String fname, String lname, LocalDate birthDate, LocalDate deathDate) {
+        this.fname = fname;
+        this.lname = lname;
+        this.birthDate = birthDate;
+        this.deathDate = deathDate;
+        this.children = new TreeSet<>();
+    }
+
+    public static Person fromCsvLine(String line){
+        String[] columns = line.split(",");
+        String[] flname = columns[0].split(" ");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.mm.yyyy");
+        LocalDate bDay = null;
+        LocalDate dDay = null;
+        if(isNotEmpty(columns[1]))
+            bDay = LocalDate.parse(columns[1],formatter);
+        if(isNotEmpty(columns[2]))
+            dDay = LocalDate.parse(columns[2],formatter);
+        Person person = new Person(flname[0], flname[1], bDay, dDay);
+        return person;
+    }
+
+    public static boolean isNotEmpty(String s){
+        return s != null && s != "" && s != " " && s != "   ";
     }
 
     public Person getYoungestChild(){
