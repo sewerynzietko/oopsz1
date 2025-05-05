@@ -1,10 +1,28 @@
 import java.util.AbstractList;
 
-public class CustomList<T>{
+public class CustomList<T> extends AbstractList{
 
     private Node<T> head;
     private Node<T> tail;
     private int size = 0;
+
+    @Override
+    public Object get(int index) {
+        if(size == 0)
+            return null;
+        if(size <= index && index > 0){
+            throw new IndexOutOfBoundsException();
+        }
+        Node<T> currentElement = head;
+        for(int i = 0; i < index; i++)
+            currentElement = currentElement.next;
+        return currentElement.value;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
 
     private static class Node<T>{
         T value;
@@ -85,5 +103,11 @@ public class CustomList<T>{
         else {
             return null;
         }
+    }
+
+    public boolean add(T value){
+        int prevSize = size;
+        addLast(value);
+        return size > prevSize;
     }
 }
