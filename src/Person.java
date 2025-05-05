@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -11,7 +8,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Person implements Comparable<Person>{
+public class Person implements Comparable<Person>, Serializable {
     private String fname, lname;
     private LocalDate birthDate;
 
@@ -187,22 +184,49 @@ public class Person implements Comparable<Person>{
         Function<Person, String> getFullName = pipla -> pipla.fname + pipla.lname;
         return people.stream().filter(pipla -> getFullName.apply(pipla).contains(key)).collect(Collectors.toList());
     }
+
+    public static List<Person> sortPeopleByBirthyear(List<Person> people) {
+        return people.stream().sorted().collect(Collectors.toList());
+    }
+
+    public static void saveToBinaryFile(List<Person> people, String path){
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
+            oos.writeObject(people);
+            oos.close();
+        }
+        catch(FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Person> readFromBinaryFile(String path){
+        List<Person> people = new ArrayList<>();
+        try{
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+            Object obj = ois.readObject();
+            if(obj instanceof List){
+                List<?> list = (List<?>) obj;
+                for(Object o : list){
+                    if(o instanceof Person){
+                        people.add((Person) o);
+                    }
+                }
+            }
+            ois.close();
+        }
+        catch(FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        catch(ClassNotFoundException e){
+            throw new RuntimeException(e);
+        }
+        return people;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
